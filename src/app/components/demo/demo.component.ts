@@ -15,6 +15,8 @@ export class DemoComponent implements OnInit {
 
   title:String="我是topbar";//指定类型
 
+  public html:String="<h2>这是一个HTML</h2>"
+
   public message:any;
 
   constructor() {

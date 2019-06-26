@@ -5,7 +5,9 @@ import { BrowserModule } from '@angular/platform-browser';
 /** angular核心模块*/
 import { NgModule } from '@angular/core';
 
-import { RouterModule } from '@angular/router';
+//路由模块
+import { AppRoutingModule } from './app-routing.module';
+
 /**根组件 */
 import { AppComponent } from './app.component';
 //普通组件
@@ -25,7 +27,7 @@ import { DemoComponent } from './components/demo/demo.component';
   //注入依赖的的其他模块
   imports: [
     BrowserModule,
-    RouterModule
+    AppRoutingModule
   ],
   //配置项目服务，管理数据
   providers: [],
