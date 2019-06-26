@@ -11,6 +11,7 @@ import { AppComponent } from './app.component';
 //普通组件
 import { TopBarComponent } from './components/top-bar/top-bar.component';
 import { ProductListComponent } from './components/product-list/product-list.component';
+import { DemoComponent } from './components/demo/demo.component';
 
 /* @NgModule装饰器，接受一个元数据对象，告诉angular如何编译和启动应用*/
 @NgModule({
@@ -18,7 +19,8 @@ import { ProductListComponent } from './components/product-list/product-list.com
   declarations: [
     AppComponent,
     TopBarComponent,
-    ProductListComponent
+    ProductListComponent,
+    DemoComponent
   ],
   //注入依赖的的其他模块
   imports: [
