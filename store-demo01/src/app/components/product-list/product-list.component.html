@@ -1,0 +1,21 @@
+<div class="list-wrap" *ngFor="let product of products; index as productId">
+ 
+    <h3>
+      <a [title]="product.name + ' details'" [routerLink]="[ '/products', productId ]" routerLinkActive="active">
+        {{ product.name }}
+      </a>
+    </h3>
+   
+    <p *ngIf="product.description">
+      Description: {{ product.description }}
+    </p>
+  
+    <div class="button-container">
+        <button nz-button nzType="primary">Share</button>
+        <app-product-alerts
+        [product]="product"
+        (notify)="toNotify()">
+        </app-product-alerts>
+    </div>
+
+  </div>

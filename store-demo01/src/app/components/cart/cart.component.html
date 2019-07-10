@@ -1,0 +1,28 @@
+<div class="form_wrap">
+    <div class="form_title">
+        <h2>cart</h2>
+        <div *ngFor="let item of cart">
+            <p>{{item.name}}</p>
+            <p>{{item.price | currency}}</p>
+        </div>
+        
+        <a [routerLink]="[ '/shipping']">shipping</a>
+    </div>
+    
+    <form class="form" [formGroup]="checkoutForm" (ngSubmit)="onSubmit(checkoutForm.value)">
+        <div class="form_cow">
+          <label>Name</label>
+          <input type="text" formControlName="name">
+        </div>
+       
+        <div class="form_cow"> 
+          <label>Address</label>
+          <input type="text" formControlName="address">
+        </div>
+       
+        <button class="button" nz-button nzType="primary" type="submit">submit</button>
+    </form>    
+</div>
+
+
+

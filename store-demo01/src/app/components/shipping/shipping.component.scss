@@ -1,0 +1,13 @@
+.shipping_wrap{
+  padding: 20px;
+  .shipping-message{
+    display: flex;
+    &>p:nth-child(1){
+      font-weight: bold;
+    }
+    &>p:nth-child(2){
+      color:red;
+    }
+
+  }
+}

@@ -1,0 +1,18 @@
+<div class="order-wrap">
+  <a [routerLink]="[ '' ]"><h1>{{title}}</h1></a>
+  <ul class="stores-wrap" *ngFor="let store of stores">
+      <h2>{{store.title}}</h2>
+    <li>
+      <ul class="store-wrap" *ngFor="let item of store.list">
+        <li>
+          <h3>{{item.title}}</h3>
+          <p>价格：{{item.price}}</p>
+          <div class="img-wrap">
+              <img src="../../../assets/img/demo-img.jpg" alt="" class="img-wrap">
+          </div>
+          <a [routerLink]="[ '/detail',item._id ]" [queryParams]="{'id':item._id}">详情</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>

@@ -1,0 +1,9 @@
+<div class="product_detail">
+    <p>product-details</p>
+    <div *ngIf="product">
+        <h3>{{ product.name }}</h3>
+        <h4>{{ product.price | currency }}</h4>
+        <p>{{ product.description }}</p>
+    </div>
+    <button nz-button nzType="primary" (click)="onAdd(product)">BUY</button>
+</div>

@@ -1,0 +1,20 @@
+.header{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background: #000;
+    padding: 10px 40px;
+    li{
+        list-style: none;
+        a{
+            margin: 10px;
+            color: #fff;
+            text-decoration: none;
+        }
+        a.active{
+            color: red;
+        }
+        margin-right: 15px;
+    }
+    
+}

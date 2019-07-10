@@ -1,0 +1,12 @@
+.list-wrap{
+  padding: 15px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  .button-container{
+    display: flex;
+    button{
+      margin-right: 10px;
+    }
+  }
+}
+
