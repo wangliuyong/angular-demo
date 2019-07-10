@@ -106,9 +106,172 @@ import { catchError, map, tap ,switchMap,distinctUntilChanged,debounceTime,combi
 
 
 ## 表单
-app.module引入
-`import { FormsModule }    from '@angular/forms';`
-使用表单的组件：
+### 配置
+需要在app.module中加入ReactiveFormsModule模块
+```ts
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+imports: [
+  FormsModule,
+  ReactiveFormsModule
+]
+```
+
+响应式表单html结构
+注意点：
+
+[formGroup]处写上表单名称
+
+响应式表单中的每个控件都必须要有自己的formControlName，而且不能加上双向绑定[(ngModel)]
+
+(ngModelChange)事件会在控件值发生改变时触发，参数$event实际为改变后的值
+
+如果控件需要要验证信息，则要在控件的html后面加上nz-form-explain标签，里面写具体的错误提示
+````
+<form nz-form [formGroup]="qrcodeForm">
+  <nz-form-item class="nz-form-item">
+
+    <nz-form-label class="nz-formlable" nzFor="type" nzRequired>二维码用途</nz-form-label>
+
+    <nz-form-control>
+
+      <nz-radio-group name="type" [nzDisabled]="id" formControlName="type" (ngModelChange)="qrcodeTypeChange($event)">
+        <label nz-radio nzValue="1">扫码后关注公众号</label>
+        <label nz-radio nzValue="2">扫码后参与指定活动</label>
+      </nz-radio-group>
+      
+    </nz-form-control>
+
+  </nz-form-item>
+
+  <nz-form-item class="nz-form-item">
+
+    <nz-form-label class="nz-formlable" nzFor="fissionId" nzRequired>模板活动</nz-form-label>
+
+    <nz-form-control>
+
+      <nz-select name="fissionId" [nzDisabled]="id" formControlName="fissionId" nzAllowClear
+        style="width: 260px;" nzPlaceHolder="请选择模板活动">
+        <nz-option *ngFor="let opt of fissionList" nzValue="{{ opt.id }}" nzLabel="{{ opt.name }}">
+        </nz-option>
+      </nz-select>
+
+      <nz-form-explain *ngIf="qrcodeForm.get('fissionId')?.dirty && qrcodeForm.get('fissionId')?.errors">
+        请选择模板活动!
+      </nz-form-explain>
+
+    </nz-form-control>
+
+  </nz-form-item>
+</form>
+```
+表单初始化
+注意点：
+
+如果控件初始值为空，输入框input的值要设为''，其他控件的值都要设为null，否则可能会有placeholder不显示的问题
+
+这里写的控件名要一一与html上的formControlName对应
+
+控件可以添加自己写的验证规则
+
+import { FormBuilder, Validators, FormGroup } from '@angular/forms';
+
+// qrcodeForm: FormGroup;
+// fb: FormBuilder
+
+this.qrcodeForm = this.fb.group({
+  type: ["1", [Validators.required]], // 二维码用途
+  action: ["2", [Validators.required]], // 二维码类型
+  name: ['', [Validators.required, this.qrcodeNameValidator]], // 二维码名称
+  fissionId: [null], // 模板活动
+  weixinMpId: [null, [Validators.required]], // 公众号
+  expireDays: ['', [Validators.required, this.expireDaysValidator]], // 有效天数
+  sourceId: [null, [Validators.required]], // 来源
+  sourceContent: ['', [this.sourceContentValidator]],
+  replyContent: ['']
+});
+表单取值
+// 取表单里的单个值
+let name = this.qrcodeForm.controls.name.value;
+
+// 取表单里的所有值
+let data = this.qrcodeForm.getRawValue();
+表单赋值
+patchValue的参数可以是多个，也可以是单个，通常都用patchValue赋值
+
+setValue的参数必须为表单里所有的控件值，且如果赋的值验证不通过会提示错误信息
+
+// patchValue
+this.qrcodeForm.patchValue({
+  type: res.type.toString(), // 二维码用途
+  action: res.action.toString(), // 二维码类型
+  name: res.name, // 二维码名称
+  fissionId: res.fissionId ? res.fissionId.toString() : null, // 模板活动
+  weixinMpId: res.weixinMpId.toString(), // 公众号
+});
+
+// setValue
+this.qrcodeForm.setValue({
+  type: res.type.toString(), // 二维码用途
+  action: res.action.toString(), // 二维码类型
+  name: res.name, // 二维码名称
+  fissionId: res.fissionId ? res.fissionId.toString() : null, // 模板活动
+  weixinMpId: res.weixinMpId.toString(), // 公众号
+  expireDays: res.expireDays ? res.expireDays.toString() : '1', // 有效天数
+  sourceId: res.sourceId.toString(), // 来源
+  sourceContent: res.sourceContent, // 来源内容
+  replyContent: res.replyContent
+});
+表单增加和删除控件项
+// 增加控件项
+this.qrcodeForm.addControl('point', this.fb.control(null, Validators.required));
+
+// 删除控件项
+this.qrcodeForm.removeControl('point');
+表单动态增加和删除验证
+页面有时候在选中一个下拉框选项时，需要隐藏或显示另外一个控件，这个控件需要把验证加上或删除，否则页面虽然看不到这个控件了，但提交表单仍可能通不过验证
+
+clearValidators后，要调用updateValueAndValidity重新计算控件值并更新验证状态
+
+// 增加验证
+this.qrcodeForm.controls.fissionId.setValidators(Validators.required);
+
+// 删除验证
+this.qrcodeForm.controls.fissionId.clearValidators();
+this.qrcodeForm.controls.fissionId.updateValueAndValidity();
+提交表单
+提交表单需要先在前端进行验证，需要调用public-method里的表单验证方法，校验不通过时，不用去请求接口
+
+通过判断this.qrcodeForm.valid可以知道验证状态，true为校验通过，false为校验不通过
+
+import { FormMethod } from '../../../common/public-method';
+```ts
+// 表单部分的通用方法
+export const FormMethod = {
+
+  /**
+   * 更新表单状态
+   * @param form FormGroup
+   */
+
+  updateFormStatus: (form: FormGroup): void => {
+    // tslint:disable-next-line:forin
+    for (const i in form.controls) {
+      form.controls[i].markAsDirty();
+      form.controls[i].updateValueAndValidity();
+    }
+  }
+};
+```
+
+// 验证每个组件，如果有错误会显示信息
+FormMethod.updateFormStatus(this.qrcodeForm);
+
+// 校验不通过，返回
+if (!this.qrcodeForm.valid) {
+  return;
+}
+
 TS:
 
 ```ts
