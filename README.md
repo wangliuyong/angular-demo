@@ -127,7 +127,7 @@ imports: [
 (ngModelChange)事件会在控件值发生改变时触发，参数$event实际为改变后的值
 
 如果控件需要要验证信息，则要在控件的html后面加上nz-form-explain标签，里面写具体的错误提示
-````
+````html
 <form nz-form [formGroup]="qrcodeForm">
   <nz-form-item class="nz-form-item">
 
@@ -165,7 +165,8 @@ imports: [
   </nz-form-item>
 </form>
 ```
-表单初始化
+
+## 表单初始化
 注意点：
 
 如果控件初始值为空，输入框input的值要设为''，其他控件的值都要设为null，否则可能会有placeholder不显示的问题
@@ -174,23 +175,27 @@ imports: [
 
 控件可以添加自己写的验证规则
 
-import { FormBuilder, Validators, FormGroup } from '@angular/forms';
+```ts
+  import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 
-// qrcodeForm: FormGroup;
-// fb: FormBuilder
+  // qrcodeForm: FormGroup;
+  // fb: FormBuilder
 
-this.qrcodeForm = this.fb.group({
-  type: ["1", [Validators.required]], // 二维码用途
-  action: ["2", [Validators.required]], // 二维码类型
-  name: ['', [Validators.required, this.qrcodeNameValidator]], // 二维码名称
-  fissionId: [null], // 模板活动
-  weixinMpId: [null, [Validators.required]], // 公众号
-  expireDays: ['', [Validators.required, this.expireDaysValidator]], // 有效天数
-  sourceId: [null, [Validators.required]], // 来源
-  sourceContent: ['', [this.sourceContentValidator]],
-  replyContent: ['']
-});
-表单取值
+  this.qrcodeForm = this.fb.group({
+    type: ["1", [Validators.required]], // 二维码用途
+    action: ["2", [Validators.required]], // 二维码类型
+    name: ['', [Validators.required, this.qrcodeNameValidator]], // 二维码名称
+    fissionId: [null], // 模板活动
+    weixinMpId: [null, [Validators.required]], // 公众号
+    expireDays: ['', [Validators.required, this.expireDaysValidator]], // 有效天数
+    sourceId: [null, [Validators.required]], // 来源
+    sourceContent: ['', [this.sourceContentValidator]],
+    replyContent: ['']
+  });
+```
+
+## 表单取值
+```ts
 // 取表单里的单个值
 let name = this.qrcodeForm.controls.name.value;
 
@@ -222,7 +227,10 @@ this.qrcodeForm.setValue({
   sourceContent: res.sourceContent, // 来源内容
   replyContent: res.replyContent
 });
-表单增加和删除控件项
+```
+
+## 表单增加和删除控件项
+```ts
 // 增加控件项
 this.qrcodeForm.addControl('point', this.fb.control(null, Validators.required));
 
@@ -245,7 +253,6 @@ this.qrcodeForm.controls.fissionId.updateValueAndValidity();
 通过判断this.qrcodeForm.valid可以知道验证状态，true为校验通过，false为校验不通过
 
 import { FormMethod } from '../../../common/public-method';
-```ts
 // 表单部分的通用方法
 export const FormMethod = {
 
@@ -271,6 +278,7 @@ FormMethod.updateFormStatus(this.qrcodeForm);
 if (!this.qrcodeForm.valid) {
   return;
 }
+```
 
 TS:
 
@@ -299,7 +307,7 @@ TS:
       this.checkoutForm.reset()
     }
   }
-  ```
+```
 
 HTML:
 ```html
@@ -401,8 +409,10 @@ app.module；
   httpOptions.headers = httpOptions.headers.set('Authorization', 'my-new-auth-token');
 
 ```
+
 返回的数据都是一个Observable对象，使用subscribe()来获取
 调用该服务;
+
 ```ts
 
   //请求json数据时
@@ -543,6 +553,7 @@ var inputStream = Rx.Observable.fromEvent(text, 'keyup') //为dom元素绑定'ke
 组件之间的交互方式，通常有以下几种：
 
 1 通过输入型绑定把数据从父组件传到子组件
+```ts
 @Input()
 子组件：
 
@@ -581,11 +592,12 @@ export class HeroParentComponent {
   heroes = HEROES;
   master = 'Master';
 }
-2 通过ngOnChanges()来截听输入属性值的变化
+```
+## 2 通过ngOnChanges()来截听输入属性值的变化
 使用 OnChanges 生命周期钩子接口的 ngOnChanges() 方法来监测输入属性值的变化并做出回应。
 
 子组件：
-
+```ts
 import { Component, Input, OnChanges, SimpleChange } from '@angular/core';
 
 @Component({
@@ -618,8 +630,10 @@ export class VersionChildComponent implements OnChanges {
     this.changeLog.push(log.join(', '));
   }
 }
+```
 父组件:
 
+```ts
 import { Component } from '@angular/core';
 
 @Component({
@@ -644,6 +658,7 @@ export class VersionParentComponent {
     this.minor = 0;
   }
 }
+```
 3 EventEmitter弹射事件
 父组件监听子组件的事件,子组件暴露一个 EventEmitter 属性，当事件发生时，子组件利用该属性 emits(向上弹射)事件。父组件绑定到这个事件属性，并在事件发生时作出回应。子组件的 EventEmitter 属性是一个输出属性，通常带有@Output 装饰器，就像在 VoterComponent 中看到的。
 
